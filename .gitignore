@@ -1,0 +1,34 @@
+# Entorno virtual (especifico de cada maquina, se recrea con requirements.txt)
+venv/
+.venv/
+env/
+
+# Base de datos (son datos generados, no codigo)
+bitacora.db
+*.db
+
+# Cache de Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Archivos grandes que NO van al repo (se comparten por Drive/USB)
+*.ova
+*.gns3project
+
+# Datos locales y secretos
+.env
+datos/
+capturas/
+root.crt
+migracion/
+evidencia/

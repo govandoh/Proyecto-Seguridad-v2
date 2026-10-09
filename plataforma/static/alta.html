@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alta de cuenta · Plataforma DCIM</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script type="module" src="/static/js/alta.js"></script>
+</head>
+<body>
+  <div class="acceso-pagina">
+    <div class="acceso-caja">
+      <div class="tarjeta">
+        <h1>Activación de cuenta</h1>
+        <div class="sec">El código de alta lo entrega el administrador y sirve una sola vez.</div>
+        <div class="pasos"><span id="p1" class="activo">1. Código y contraseña</span><span id="p2">2. Registrar passkey</span></div>
+
+        <form id="f-alta" autocomplete="off">
+          <div class="campo"><label for="usuario">Usuario</label>
+            <input id="usuario" type="text" autocomplete="username" required maxlength="40"></div>
+          <div class="campo"><label for="codigo">Código de alta</label>
+            <input id="codigo" type="text" class="mono" placeholder="XXXX-XXXX-XXXX" required maxlength="20"></div>
+          <div class="campo"><label for="password">Nueva contraseña</label>
+            <input id="password" type="password" autocomplete="new-password" required minlength="12" maxlength="128"></div>
+          <div class="campo"><label for="password2">Repita la contraseña</label>
+            <input id="password2" type="password" autocomplete="new-password" required minlength="12" maxlength="128"></div>
+          <div class="ayuda">Mínimo 12 caracteres. Se aceptan frases largas; no se exigen símbolos.</div>
+          <button class="boton primario" type="submit">Continuar</button>
+        </form>
+
+        <form id="f-passkey" class="oculto">
+          <div class="campo"><label for="nombre">Nombre del dispositivo</label>
+            <input id="nombre" type="text" maxlength="40" placeholder="Por ejemplo: Teléfono de turno"></div>
+          <p class="sec">Al continuar, el navegador creará una passkey. Si usa el teléfono, escanee el QR y confirme con su huella o rostro: la biometría se queda en el teléfono.</p>
+          <button class="boton primario" type="submit">Registrar passkey</button>
+        </form>
+
+        <div id="error" class="error" role="alert"></div>
+        <div class="ayuda"><a href="/login">Volver al inicio de sesión</a></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

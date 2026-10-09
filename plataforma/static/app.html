@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plataforma DCIM · Operador Postal</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script src="/static/vendor/chart.umd.min.js"></script>
+  <script type="module" src="/static/js/app.js"></script>
+</head>
+<body>
+  <header class="cabecera">
+    <div class="marca">
+      <strong>Monitoreo y ciberresiliencia del datacenter</strong>
+      <span>Operador Postal Designado · ISO/IEC 27001:2022</span>
+    </div>
+    <div class="espacio"></div>
+    <span id="chip-modo" class="chip">Red: …</span>
+    <span id="chip-ws" class="chip">Conectando…</span>
+    <span id="chip-usuario" class="chip">…</span>
+    <button id="salir" class="boton" type="button">Salir</button>
+  </header>
+  <nav class="pestanas" role="tablist" aria-label="Módulos">
+    <button role="tab" data-tab="resumen" aria-selected="true">Resumen<span id="cnt-pend" class="contador"></span></button>
+    <button role="tab" data-tab="red">Red</button>
+    <button role="tab" data-tab="energia">Energía</button>
+    <button role="tab" data-tab="ambiente">Ambiente</button>
+    <button role="tab" data-tab="accesos">Accesos</button>
+    <button role="tab" data-tab="bitacora">Bitácora</button>
+    <button role="tab" data-tab="indicadores">Indicadores</button>
+    <button role="tab" data-tab="simulacion" data-permiso="simular">Simulación</button>
+    <button role="tab" data-tab="admin" data-permiso="administrar">Administración</button>
+  </nav>
+  <main>
+    <section id="v-resumen"></section>
+    <section id="v-red" class="oculto"></section>
+    <section id="v-energia" class="oculto"></section>
+    <section id="v-ambiente" class="oculto"></section>
+    <section id="v-accesos" class="oculto"></section>
+    <section id="v-bitacora" class="oculto"></section>
+    <section id="v-indicadores" class="oculto"></section>
+    <section id="v-simulacion" class="oculto"></section>
+    <section id="v-admin" class="oculto"></section>
+  </main>
+</body>
+</html>

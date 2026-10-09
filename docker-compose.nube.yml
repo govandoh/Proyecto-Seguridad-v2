@@ -1,0 +1,12 @@
+# Modo nube (VM de Azure con acceso por Tailscale).
+# La plataforma se publica solo en 127.0.0.1:8000 de la VM; `tailscale serve` la expone con
+# HTTPS válido en https://<nombre>.<tailnet>.ts.net, visible únicamente dentro de la tailnet.
+# RP_ID y ORIGENES vienen del .env (./scripts/generar_env.sh nube <dominio>).
+# Se activa con COMPOSE_FILE=docker-compose.yml:docker-compose.nube.yml en .env
+services:
+  plataforma:
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  proxy:
+    profiles: ["https"]   # Caddy no se usa: el TLS lo termina Tailscale

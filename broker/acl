@@ -1,0 +1,24 @@
+# ACL del broker. Los tópicos se describen en docs/MQTT_TOPICOS.md.
+
+# Plataforma: lee todo el árbol y publica comandos y respuestas de acceso.
+user plataforma
+topic readwrite dc/#
+
+# Capturador de red: solo publica observaciones y, en modo demo, recibe comandos.
+user sensor
+topic write dc/red/observacion
+topic read dc/cmd/red
+
+# Dispositivos simulados: publican su telemetría y reciben sus comandos.
+user sim
+topic write dc/energia/ups
+topic write dc/energia/prueba
+topic write dc/ambiente/lectura
+topic write dc/ambiente/alarma
+topic write dc/acceso/lectura
+topic write dc/acceso/puerta
+topic read dc/energia/ups
+topic read dc/acceso/cmd
+topic read dc/cmd/ups
+topic read dc/cmd/ambiente
+topic read dc/cmd/puerta

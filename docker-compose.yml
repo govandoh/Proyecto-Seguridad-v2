@@ -1,0 +1,120 @@
+# Plataforma de monitoreo y ciberresiliencia del datacenter - Operador Postal Designado
+# Se ejecuta dentro de la GNS3 VM:   ./scripts/generar_env.sh && docker compose up -d --build
+name: plataforma-dcim
+
+x-seguro: &seguro
+  restart: unless-stopped
+  security_opt: ["no-new-privileges:true"]
+  logging:
+    driver: json-file
+    options: { max-size: "5m", max-file: "3" }
+
+services:
+  broker:
+    <<: *seguro
+    image: eclipse-mosquitto:2
+    entrypoint: ["/bin/sh", "/config-base/entrypoint.sh"]
+    environment:
+      MQTT_PASS_PLATAFORMA: ${MQTT_PASS_PLATAFORMA:?defina MQTT_PASS_PLATAFORMA en .env}
+      MQTT_PASS_SENSOR: ${MQTT_PASS_SENSOR:?defina MQTT_PASS_SENSOR en .env}
+      MQTT_PASS_SIM: ${MQTT_PASS_SIM:?defina MQTT_PASS_SIM en .env}
+    volumes:
+      - ./broker:/config-base:ro
+    ports:
+      - "127.0.0.1:1883:1883"   # solo para sensor-red, que usa la red del host
+    networks: [dcim]
+
+  plataforma:
+    <<: *seguro
+    build: ./plataforma
+    environment:
+      RP_ID: ${RP_ID:-plataforma.test}
+      ORIGENES: ${ORIGENES:-https://plataforma.test}
+      MQTT_HOST: broker
+      MQTT_USER: plataforma
+      MQTT_PASS: ${MQTT_PASS_PLATAFORMA}
+      ADMIN_CODIGO_ALTA: ${ADMIN_CODIGO_ALTA:-}
+      API_DOCS: ${API_DOCS:-false}
+      ENERGIA_UTIL_WH: ${ENERGIA_UTIL_WH:-864}
+      EFICIENCIA_INVERSOR: ${EFICIENCIA_INVERSOR:-0.90}
+      SESION_INACTIVIDAD_MIN: ${SESION_INACTIVIDAD_MIN:-15}
+      TZ: ${TZ:-America/Guatemala}
+    volumes:
+      - datos_plataforma:/app/datos
+    read_only: true
+    tmpfs: ["/tmp"]
+    depends_on: [broker]
+    networks: [dcim]
+
+  proxy:
+    <<: *seguro
+    image: caddy:2-alpine
+    environment:
+      PLATAFORMA_HOST: ${RP_ID:-plataforma.test}
+    volumes:
+      - ./proxy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./datos/caddy:/data          # aquí queda la CA local: datos/caddy/caddy/pki/authorities/local/root.crt
+    ports:
+      - "${HTTPS_PUERTO:-443}:443"
+    depends_on: [plataforma]
+    networks: [dcim]
+
+  sensor-red:
+    <<: *seguro
+    build: ./sensor-red
+    network_mode: host               # necesita ver la interfaz eth2 de la GNS3 VM
+    cap_drop: [ALL]
+    cap_add: [NET_RAW]
+    read_only: true
+    tmpfs: ["/tmp"]                  # Scapy puede escribir caché en HOME
+    environment:
+      HOME: /tmp
+      MODO: ${MODO_RED:-captura}     # captura | demo
+      IFACE: ${IFACE:-eth2}
+      IP_CAPTURA: ${IP_CAPTURA:-10.10.10.1}
+      MQTT_HOST: 127.0.0.1
+      MQTT_USER: sensor
+      MQTT_PASS: ${MQTT_PASS_SENSOR}
+    depends_on: [broker]
+
+  sim-ups:
+    <<: *seguro
+    build: ./simuladores
+    command: ["python", "ups.py"]
+    read_only: true
+    environment: &sim
+      MQTT_HOST: broker
+      MQTT_USER: sim
+      MQTT_PASS: ${MQTT_PASS_SIM}
+      ENERGIA_UTIL_WH: ${ENERGIA_UTIL_WH:-864}
+      EFICIENCIA_INVERSOR: ${EFICIENCIA_INVERSOR:-0.90}
+      CARGA_W: ${CARGA_W:-566.2}
+      FACTOR_TIEMPO: ${FACTOR_TIEMPO:-30}
+      PLANTA_ARRANQUE_S: ${PLANTA_ARRANQUE_S:-7}
+    depends_on: [broker]
+    networks: [dcim]
+
+  sim-ambiente:
+    <<: *seguro
+    build: ./simuladores
+    command: ["python", "ambiente.py"]
+    read_only: true
+    environment: *sim
+    depends_on: [broker]
+    networks: [dcim]
+
+  sim-puerta:
+    <<: *seguro
+    build: ./simuladores
+    command: ["python", "puerta.py"]
+    read_only: true
+    environment: *sim
+    depends_on: [broker]
+    networks: [dcim]
+
+networks:
+  dcim:
+    driver: bridge
+
+volumes:
+  datos_plataforma:

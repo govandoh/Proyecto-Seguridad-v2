@@ -1,0 +1,15 @@
+# HTTPS con autoridad de certificación local de Caddy. WebAuthn exige contexto
+# seguro y un nombre de dominio: la plataforma se abre como https://plataforma.test
+{
+	local_certs
+	skip_install_trust
+}
+
+{$PLATAFORMA_HOST:plataforma.test} {
+	tls internal
+	encode gzip
+	reverse_proxy plataforma:8000
+	log {
+		output stdout
+	}
+}

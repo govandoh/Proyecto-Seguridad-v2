@@ -1,0 +1,8 @@
+# Versiones fijadas (hallazgo V5): se actualizan de forma deliberada y se revisan con pip-audit.
+fastapi==0.141.1
+starlette==1.0.0
+pydantic==2.13.3
+uvicorn[standard]==0.46.0
+paho-mqtt==2.1.0
+bcrypt==5.0.0
+webauthn==3.0.1

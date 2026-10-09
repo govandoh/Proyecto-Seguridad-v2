@@ -1,0 +1,15 @@
+# Modo localhost (desarrollo y demostración desde el propio equipo).
+# La plataforma se publica solo en 127.0.0.1:8000 dentro de la GNS3 VM y Windows la abre
+# por un túnel SSH:  ssh -N -L 8000:127.0.0.1:8000 gns3@192.168.56.101
+# http://localhost es contexto seguro para WebAuthn: no hace falta archivo hosts ni CA.
+# Se activa con COMPOSE_FILE=docker-compose.yml:docker-compose.localhost.yml en .env
+services:
+  plataforma:
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      RP_ID: localhost
+      ORIGENES: http://localhost:8000
+
+  proxy:
+    profiles: ["https"]   # Caddy solo arranca con --profile https (modo plataforma.test)

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acceso · Plataforma DCIM</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script type="module" src="/static/js/login.js"></script>
+</head>
+<body>
+  <div class="acceso-pagina">
+    <div class="acceso-caja">
+      <div class="tarjeta">
+        <h1>Plataforma de monitoreo del datacenter</h1>
+        <div class="sec">Operador Postal Designado · acceso con dos factores</div>
+        <div class="pasos"><span id="p1" class="activo">1. Contraseña</span><span id="p2">2. Passkey</span></div>
+
+        <form id="f-pass" autocomplete="on">
+          <div class="campo"><label for="usuario">Usuario</label>
+            <input id="usuario" type="text" autocomplete="username" required maxlength="40"></div>
+          <div class="campo"><label for="password">Contraseña</label>
+            <input id="password" type="password" autocomplete="current-password" required maxlength="128"></div>
+          <button class="boton primario" type="submit">Continuar</button>
+        </form>
+
+        <div id="paso-passkey" class="oculto">
+          <form id="f-passkey">
+            <p class="sec">Confirme su identidad con la passkey registrada. El navegador le ofrecerá el medio disponible.</p>
+            <button class="boton primario" type="submit">Verificar con passkey</button>
+          </form>
+          <div class="ayuda">
+            <ul>
+              <li>Teléfono: elija "Usar un teléfono", escanee el QR y confirme con su huella o rostro.</li>
+              <li>Llave FIDO2: insértela y tóquela.</li>
+              <li>Windows Hello o el autenticador virtual de Chrome en la demostración.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="error" class="error" role="alert"></div>
+        <div class="ayuda">¿Primera vez o se restableció su cuenta? <a href="/alta">Active su cuenta con el código de alta</a>.</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
