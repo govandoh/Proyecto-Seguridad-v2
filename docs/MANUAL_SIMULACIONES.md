@@ -5,12 +5,9 @@ UMG, Seguridad y Auditoría de Sistemas, 2026.
 
 Este manual está dirigido al equipo que audita el proyecto. Explica cómo provocar cada
 escenario de energía, ambiente, acceso físico y red, qué debe registrar la plataforma, contra
-qué norma se evalúa y cómo comprobar la evidencia. No cubre el uso básico del tablero ni el
-encendido del laboratorio; para eso están `ARRANQUE.md` y `DESPLIEGUE_GNS3.md`. Cómo entrar
-al laboratorio en la nube: `ACCESO_AUDITORES.md`.
-
-En la nube, la plataforma está en `https://dcim.<tailnet>.ts.net` y el punto de captura es
-`br-lab` en lugar de `eth2`. Los comandos `evidencia.ps1` llevan `-VM gns3@dcim`.
+qué norma se evalúa y cómo comprobar la evidencia. Esta versión corresponde a la **ejecución
+local** del laboratorio (sección 3.1); el detalle de instalación y solución de problemas está
+en `ARRANQUE.md` y `DESPLIEGUE_GNS3.md`.
 
 ## 1. Alcance y carácter simulado
 
@@ -54,7 +51,43 @@ Las variables del UPS siguen la convención de Network UPS Tools (`ups.status`,
 
 ## 3. Preparación para auditar
 
-### 3.1 Cuentas necesarias
+### 3.1 Ejecución local
+
+| Elemento | Valor |
+|---|---|
+| Equipo anfitrión | Windows con GNS3 2.2.61, VirtualBox y la GNS3 VM |
+| GNS3 VM | `192.168.56.101`, usuario `gns3`, acceso por llave SSH |
+| Red del laboratorio | `10.10.10.0/24`; la VM captura en `eth2` (10.10.10.1), conectada al nodo Cloud1 |
+| Plataforma | Seis contenedores Docker dentro de la VM, publicados solo en `127.0.0.1:8000` de la VM |
+| Acceso | `http://localhost:8000` desde Windows, a través de un túnel SSH |
+| Navegador | Chrome o Edge; un teléfono con Bluetooth para la passkey |
+
+Pasos, en este orden:
+
+1. Abrir GNS3 en Windows: arranca la GNS3 VM. Abrir el proyecto **Topologia** y pulsar
+   *Start all nodes*. Dejar **PC-INTRUSO apagado**: encenderlo es el escenario R1.
+2. Comprobar en *Topology Summary* que Cloud1 está conectado por `eth2` a SW-CIRC-A `eth4`.
+   Cada Alpine levanta su IP y su latido al arrancar; no hay que configurar nada.
+3. La plataforma arranca sola con la VM. Para comprobarla, en PowerShell:
+   ```powershell
+   ssh gns3@192.168.56.101 "cd ~/plataforma && docker compose ps"
+   ```
+   Deben aparecer seis servicios `Up` y `plataforma` como `healthy`.
+4. Abrir el túnel en una ventana de PowerShell, desde la carpeta del proyecto, y dejarla abierta:
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File .\scripts\windows\tunel.ps1
+   ```
+5. Abrir **`http://localhost:8000`**, siempre con `localhost` y no con la IP: WebAuthn
+   rechaza las direcciones IP. Ingresar con contraseña y passkey. Si el navegador ofrece
+   guardar en Google o en Windows, elegir "Guardar de otra forma" o "Cambiar" →
+   "iPhone, iPad o dispositivo Android" y escanear el QR con el teléfono.
+6. En la pestaña Red debe leerse "Captura real eth2" con seis equipos en línea.
+
+El ping de los Alpine hacia 10.10.10.1 no recibe respuesta y es normal: la plataforma
+detecta a los equipos por sus solicitudes ARP. Se recomiendan 2 o más CPU para la GNS3 VM
+(sección 10).
+
+### 3.2 Cuentas necesarias
 
 | Rol | Para qué sirve en la auditoría |
 |---|---|
@@ -65,7 +98,7 @@ Las variables del UPS siguen la convención de Network UPS Tools (`ups.status`,
 Se recomienda que el equipo auditor reciba una cuenta `operador` y una `auditor`. El
 administrador emite los códigos en Administración; cada auditor registra su propia passkey.
 
-### 3.2 Estado inicial limpio
+### 3.3 Estado inicial limpio
 
 Antes de cada escenario, en **Simulación**:
 
@@ -76,7 +109,7 @@ Antes de cada escenario, en **Simulación**:
 
 Esperar a que Energía muestre **NORMAL** y que los dos sensores estén en rango.
 
-### 3.3 Cómo se registra la evidencia
+### 3.4 Cómo se registra la evidencia
 
 1. Antes del escenario, anotar el último `id` de la bitácora: `.\scripts\windows\evidencia.ps1 -Ultimos 1`.
 2. Ejecutar el escenario.
@@ -351,5 +384,5 @@ integridad de la bitácora (100 %).
 | La descarga de la batería está acelerada x30 | Las duraciones de autonomía son simuladas; el tiempo de transferencia es real |
 | MQTT sin TLS dentro de la red interna de Docker | En producción se activaría TLS y OSDP con canal seguro para las lectoras |
 | 802.1X por lista de permitidos IP y MAC, no por autenticación de puerto con FreeRADIUS | Se detecta el equipo no autorizado, pero no se le bloquea el puerto |
-| La GNS3 VM local tiene 1 CPU | Al encender nodos, la VM se satura y aparecen eventos falsos de `capturador_caido`, `sensor_mudo`, `ups_sin_comunicacion` y `cascada_poe` durante 2 o 3 min. Los eventos del ensayo afectados están identificados en `REGISTRO_VALIDACION.md` (hallazgo H1). La VM de Azure tiene 4 CPU para evitarlo |
+| La GNS3 VM local tiene 1 CPU | Al encender nodos, la VM se satura y aparecen eventos falsos de `capturador_caido`, `sensor_mudo`, `ups_sin_comunicacion` y `cascada_poe` durante 2 o 3 min. Los eventos del ensayo afectados están identificados en `REGISTRO_VALIDACION.md` (hallazgo H1). Se recomienda asignar 2 o más CPU a la GNS3 VM en VirtualBox |
 | Los comandos de ensayo enviados directamente al broker no registran `comando_simulado` | Solo los botones de Simulación dejan el actor; el ensayo del 3 de octubre usó el broker para los pasos 5 a 10 |
