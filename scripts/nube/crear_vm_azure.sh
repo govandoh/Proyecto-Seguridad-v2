@@ -11,6 +11,15 @@ set -euo pipefail
 TS_AUTHKEY="${TS_AUTHKEY:?Defina antes: export TS_AUTHKEY='tskey-auth-...'}"
 GRUPO="rg-dcim"
 
+# Una suscripción nueva no tiene registrados los proveedores de recursos. Sin Microsoft.Compute
+# la cuota aparece vacía y az vm create responde QuotaExceeded; DevTestLab lo usa el apagado automático.
+for p in Microsoft.Compute Microsoft.Network Microsoft.Storage Microsoft.DevTestLab; do
+  if [ "$(az provider show -n "$p" --query registrationState -o tsv 2>/dev/null | tr -d '\r')" != "Registered" ]; then
+    echo "== Registrando el proveedor $p (puede tardar 1 o 2 minutos)"
+    az provider register -n "$p" --wait -o none
+  fi
+done
+
 # Las suscripciones Azure for Students solo permiten algunas regiones (política
 # "allowed locations") y tienen cuotas de vCPU por familia de tamaño. El script prueba las
 # regiones permitidas, ordenadas por cercanía a Guatemala, y en cada una varios tamaños, hasta
