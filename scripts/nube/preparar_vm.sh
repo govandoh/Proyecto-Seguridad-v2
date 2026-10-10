@@ -119,6 +119,25 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl enable --now lab-red.service gns3server.service
 
+paso "Servicio dcim-topologia: abre el proyecto y enciende los nodos al arrancar la VM"
+sudo tee /etc/systemd/system/dcim-topologia.service >/dev/null <<EOF
+[Unit]
+Description=Abre la topología GNS3 del laboratorio y enciende sus nodos (salvo PC-INTRUSO)
+After=gns3server.service lab-red.service
+Requires=gns3server.service
+
+[Service]
+Type=oneshot
+User=$USUARIO
+ExecStart=$HOGAR/plataforma/scripts/nube/arrancar_topologia.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo systemctl daemon-reload
+sudo systemctl enable dcim-topologia.service
+
 paso "Imágenes de la topología"
 sudo docker pull -q alpine:latest
 sudo docker pull -q gns3/openvswitch:latest

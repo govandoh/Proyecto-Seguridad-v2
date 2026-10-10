@@ -143,6 +143,19 @@ el proyecto en su carpeta) y se abre con `POST /v2/projects/<id>/open`. Las MAC 
 porque están en el archivo del proyecto. La API `projects/load` no sirve: exige el servidor en
 modo `--local`.
 
+### 6.2 Arranque automático de la topología
+
+El servicio `dcim-topologia` (`scripts/nube/arrancar_topologia.sh`) se ejecuta en cada arranque
+de la VM: abre el proyecto, desactiva su cierre automático, enciende todos los nodos salvo
+PC-INTRUSO y comprueba que cada Alpine tenga la MAC del proyecto, reiniciándolo si no.
+
+| Problema que evita | Detalle |
+|---|---|
+| Pérdida de visibilidad al cerrar el navegador | GNS3 cierra por defecto un proyecto (`auto_close`) cuando se desconecta el último cliente, y apaga sus nodos. Ocurrió el 10 de octubre de 2026 a las 22:16 UTC |
+| Suplantación falsa | Al recrear un contenedor, GNS3 a veces no aplica la MAC fijada y el equipo aparece con una aleatoria. Le pasó a LECT-01 (evento 216) |
+
+Se puede ejecutar a mano en cualquier momento: `ssh gns3@dcim "bash ~/plataforma/scripts/nube/arrancar_topologia.sh"`.
+
 ## 7. Verificación
 
 | # | Prueba | Resultado esperado |

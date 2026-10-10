@@ -115,16 +115,15 @@ desde el portal de Azure.
 | `auditor` | Verificar la cadena de hash, exportar la bitácora y comprobar que no puede simular ni acusar |
 | `administrador` | Solo lo usa el equipo del proyecto para emitir códigos de alta |
 
-Cada auditor recibe **dos cuentas**, una de operador y una de auditor, porque la
-plataforma separa funciones: quien simula no exporta ni verifica, y viceversa (NIST SP 800-53
-AC-6). El equipo del proyecto las crea con la cuenta de administrador y entrega por **mensaje
-directo**, separado de este manual, el usuario y el **código de alta** de cada una, junto con
-la clave del servidor GNS3.
+La plataforma separa funciones: quien simula no exporta ni verifica, y viceversa (NIST SP
+800-53 AC-6). Por eso las simulaciones las ejecuta la cuenta de operador y la verificación de
+la evidencia, las cuentas de auditor. Las cuentas asignadas a este equipo auditor están en el
+**Anexo 1**. El equipo del proyecto entrega por **mensaje directo**, separado de este manual,
+el **código de alta** de cada cuenta y la clave del servidor GNS3.
 
 | Dato | Detalle |
 |---|---|
-| Usuarios | `op-<apellido>` (operador) y `aud-<apellido>` (auditor), o `operador-ext` y `auditor-ext` para todo el equipo |
-| Código de alta | Un solo uso, vence en 24 horas. Si vence, el equipo emite otro con "Restablecer" |
+| Código de alta | Un solo uso, vence a las 24 horas de emitido. Si vence, el equipo emite otro con "Restablecer" |
 | Contraseña | La define el auditor al activar la cuenta: mínimo 12 caracteres |
 | Passkey | La registra cada auditor en su propio dispositivo; la biometría no sale de él |
 | Evidencia | Cada alta, activación e ingreso queda en la bitácora: `usuario_alta`, `passkey_registrada`, `auth_exitosa` |
@@ -421,3 +420,28 @@ integridad de la bitácora (100 %).
 | La evidencia del ensayo proviene del laboratorio local, una VM de 1 CPU | Los eventos 136 a 171 de la bitácora migrada son falsos positivos por saturación de esa VM (hallazgo H1 de `REGISTRO_VALIDACION.md`). La VM de Azure tiene 4 vCPU; repetir el escenario R1 permite comprobar que ya no ocurren |
 | La bitácora fue migrada desde el laboratorio local | El evento 188 conserva su hash original; el primer `plataforma_iniciada` con `RP_ID=dcim.taila9c375.ts.net` marca el paso a la nube y la cadena es continua |
 | Los comandos de ensayo enviados directamente al broker no registran `comando_simulado` | Solo los botones de Simulación dejan el actor; el ensayo del 3 de octubre usó el broker para los pasos 5 a 10 |
+
+## Anexo 1. Cuentas asignadas al equipo auditor
+
+| Auditor | Usuario | Rol | Puede hacer |
+|---|---|---|---|
+| Javier Nij | `op-nij` | operador | Ejecutar las simulaciones de energía, ambiente y acceso, y atender alertas |
+| Javier Nij | `aud-nij` | auditor | Verificar la cadena de hash y exportar la bitácora |
+| Cristian Rosales | `aud-rosales` | auditor | Verificar la cadena de hash y exportar la bitácora |
+| Auditor-Byron | `aud-auditor3` | auditor | Verificar la cadena de hash y exportar la bitácora |
+
+| Dato | Valor |
+|---|---|
+| Plataforma | `https://dcim.taila9c375.ts.net` |
+| Activación de cuentas | `https://dcim.taila9c375.ts.net/alta` |
+| Topología GNS3 | `http://dcim.taila9c375.ts.net:3080`, usuario `gns3` |
+| Altas registradas en la bitácora | Eventos 208 a 211 (`usuario_alta`, actor `administrador:admin`) |
+| Vigencia de los códigos emitidos | Hasta el 11 de octubre de 2026, 16:10 hora de Guatemala |
+
+Las simulaciones solo pueden ejecutarse con `op-nij`; los demás auditores observan la sesión y
+verifican después la evidencia con su cuenta de auditor. Las cuentas de auditor comprueban,
+además, el mínimo privilegio: no ven las pestañas Simulación ni Administración y no pueden
+registrar acuses (escenario 15 de `VALIDACION_DEMO.md`).
+
+Los escenarios de red se ejecutan en GNS3 con las credenciales del servidor, que no dependen
+del rol en la plataforma.

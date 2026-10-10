@@ -103,7 +103,7 @@ function codigo(lineas) {
 function convertir(texto) {
   const lineas = texto.split("\n");
   const out = [];
-  let i = 0, parrafo = [];
+  let i = 0, parrafo = [], instancia = 0, reiniciar = true;
   const volcar = () => {
     if (parrafo.length) { out.push(new Paragraph({ spacing: { after: 120 }, children: runs(parrafo.join(" ")) })); parrafo = []; }
   };
@@ -124,6 +124,7 @@ function convertir(texto) {
       volcar();
       const nivel = { 2: HeadingLevel.HEADING_1, 3: HeadingLevel.HEADING_2, 4: HeadingLevel.HEADING_3 }[h[1].length];
       out.push(new Paragraph({ heading: nivel, keepNext: true, children: runs(h[2]) }));
+      reiniciar = true;
       i++; continue;
     }
     const num = /^(\d+)\. (.*)$/.exec(l);
@@ -133,7 +134,8 @@ function convertir(texto) {
       let txt = (num ? num[2] : vin[1]);
       i++;
       while (i < lineas.length && /^ {2,}\S/.test(lineas[i]) && !/^\s*```/.test(lineas[i])) txt += " " + lineas[i++].trim();
-      out.push(new Paragraph({ numbering: { reference: num ? "numeros" : "vinetas", level: 0 }, spacing: { after: 60 }, children: runs(txt) }));
+      if (num && reiniciar) { instancia++; reiniciar = false; }
+      out.push(new Paragraph({ numbering: { reference: num ? "numeros" : "vinetas", level: 0, instance: num ? instancia : 0 }, spacing: { after: 60 }, children: runs(txt) }));
       // bloque de código sangrado dentro de un ítem
       if (i < lineas.length && /^\s+```/.test(lineas[i])) {
         const blq = []; i++;
