@@ -35,9 +35,9 @@ else
   done
   for r in $PERMITIDAS; do echo "$REGIONES" | grep -qw "$r" || REGIONES="$REGIONES $r"; done
 fi
-# 4 vCPU primero (recomendado); 2 vCPU como respaldo. Familia D antes que B: las suscripciones de
-# estudiante suelen tener cuota 0 en la familia B (standardBSFamily).
-TAMANOS="${TAMANOS:-Standard_D4as_v5 Standard_D4s_v5 Standard_D2as_v5 Standard_D2s_v5 Standard_B4ms Standard_B2ms}"
+# 4 vCPU y 16 GB primero; 2 vCPU como respaldo. Familias con cuota en Azure for Students:
+# Basv2 y Bsv2 (10 vCPU), DASv4, DSv3 y DSv4 (4 vCPU). Las v5 suelen tener cuota 0.
+TAMANOS="${TAMANOS:-Standard_B4as_v2 Standard_B4s_v2 Standard_D4as_v4 Standard_D4s_v3 Standard_D4s_v4 Standard_B4ms Standard_B2as_v2 Standard_B2s_v2 Standard_D2s_v3}"
 echo "== Orden de prueba: regiones [$(echo $REGIONES)], tamaños [$(echo $TAMANOS)]"
 VM="dcim"
 # Llave pública SSH de Gerardo (es pública; la privada nunca sale de su equipo).
