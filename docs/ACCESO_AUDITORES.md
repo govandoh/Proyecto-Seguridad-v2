@@ -5,8 +5,11 @@ red privada de Tailscale. No hay servicios publicados en Internet.
 
 ## 1. Unirse a la red
 
-1. Crear una cuenta gratuita en tailscale.com e instalar Tailscale en el equipo desde el que
-   se auditará.
+1. Crear una cuenta gratuita en https://login.tailscale.com/start con una cuenta **personal**
+   (GitHub, Google o Microsoft), no con el correo institucional: con `@miumg.edu.gt` se entra a
+   la red de la universidad y el equipo queda esperando aprobación. Instalar Tailscale desde
+   https://tailscale.com/download e iniciar sesión con la misma cuenta. El paso a paso está en
+   la sección 3.1 del manual.
 2. Enviar al equipo del proyecto el correo de esa cuenta. Recibirán una invitación para
    compartir la máquina **`dcim`**; al aceptarla, aparece en la lista de Tailscale.
 3. Comprobar: abrir `https://dcim.taila9c375.ts.net/salud`. Debe responder

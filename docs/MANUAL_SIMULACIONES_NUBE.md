@@ -62,16 +62,45 @@ Las variables del UPS siguen la convención de Network UPS Tools (`ups.status`,
 | Red del laboratorio | `10.10.10.0/24`; la VM captura en `br-lab` (10.10.10.1), conectada al nodo Cloud1 |
 | Navegador | Chrome o Edge; un teléfono con Bluetooth, Windows Hello o una llave FIDO2 para la passkey |
 
-Pasos, en este orden:
+#### Cuenta de Tailscale e instalación
 
-1. Instalar Tailscale, iniciar sesión con una cuenta propia y aceptar la invitación a la
-   máquina **`dcim`** que envía el equipo del proyecto.
-2. Comprobar `https://dcim.taila9c375.ts.net/salud`: debe responder
-   `{"estado":"ok","mqtt":true}`.
-3. Abrir `https://dcim.taila9c375.ts.net/alta` y activar cada cuenta con su código de alta
-   (sección 3.2). Al registrar la passkey, elegir el teléfono por QR, Windows Hello o una llave.
-4. Abrir la topología en `http://dcim.taila9c375.ts.net:3080` con las credenciales del
-   servidor GNS3, abrir el proyecto **Topologia** y comprobar que los nodos estén encendidos,
+La VM no tiene puertos abiertos a Internet: solo se alcanza dentro de la red privada de
+Tailscale. Cada auditor necesita su propia cuenta de Tailscale, gratuita, y el programa
+instalado en el equipo desde el que audita.
+
+1. Abrir **https://login.tailscale.com/start** e iniciar sesión con una cuenta **personal**:
+   GitHub, Google o Microsoft. **No usar el correo institucional** (`@miumg.edu.gt`):
+   Tailscale agrupa todas las cuentas de un mismo dominio en la red de esa organización, y
+   el equipo quedaría esperando la aprobación de su administrador.
+2. Si Tailscale pregunta por el uso de la red, elegir uso personal y omitir los pasos de
+   bienvenida.
+3. Descargar el programa desde **https://tailscale.com/download** (Windows, macOS o Linux),
+   instalarlo y, al abrirlo, iniciar sesión con la **misma cuenta**. El ícono de Tailscale
+   queda junto al reloj; en su menú debe figurar el equipo como conectado.
+4. Enviar al equipo del proyecto el **correo o usuario** de esa cuenta, tal como aparece en
+   la consola de Tailscale, por ejemplo `nombre@gmail.com` o `usuario@github`.
+5. El equipo del proyecto comparte la máquina **`dcim`**. Llega un correo de Tailscale con la
+   invitación: **Accept**. Desde ese momento `dcim` aparece en la lista de máquinas.
+
+Compartir una máquina solo da acceso a esa VM: el auditor no ve otros equipos de la red del
+proyecto, ni el proyecto ve los del auditor.
+
+#### Primer ingreso
+
+1. Comprobar `https://dcim.taila9c375.ts.net/salud`: debe responder
+   `{"estado":"ok","mqtt":true}`. Si el nombre no se resuelve, activar **MagicDNS** en la
+   consola de Tailscale propia (sección DNS) y reintentar.
+2. Abrir `https://dcim.taila9c375.ts.net/alta` y activar cada cuenta (sección 3.2): usuario,
+   código de alta y una contraseña de al menos 12 caracteres. En el segundo paso, escribir un
+   nombre para el dispositivo y pulsar **Registrar passkey**. Si el navegador ofrece guardarla
+   en Google o en Windows, elegir **Guardar de otra forma** o **Cambiar** →
+   **iPhone, iPad o dispositivo Android**, escanear el QR con el teléfono y confirmar con la
+   huella. Con Bluetooth encendido en la computadora y en el teléfono. También sirven Windows
+   Hello o una llave FIDO2.
+3. Cerrar sesión y volver a entrar con contraseña y passkey para confirmar que la cuenta quedó activa.
+4. Abrir la topología en `http://dcim.taila9c375.ts.net:3080` en el navegador. Cuando pida
+   usuario y contraseña, usar las credenciales del servidor GNS3 entregadas por el equipo del
+   proyecto. Abrir el proyecto **Topologia** y comprobar que los nodos estén encendidos,
    salvo **PC-INTRUSO**, que se enciende en el escenario R1.
 5. En la pestaña Red de la plataforma debe leerse "Captura real br-lab" con seis equipos en línea.
 
