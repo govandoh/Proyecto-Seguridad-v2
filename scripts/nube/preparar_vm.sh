@@ -140,7 +140,7 @@ paso "Reloj (control 8.17)"
 timedatectl | grep -E 'synchronized|NTP' || true
 
 paso "Resumen"
-ip -br addr show br-lab lab-gns
+ip -br addr show br-lab; ip -br link show lab-gns
 systemctl is-active lab-red gns3server docker
 "$HOGAR/.local/bin/gns3server" --version
 docker compose version 2>/dev/null || sudo docker compose version
