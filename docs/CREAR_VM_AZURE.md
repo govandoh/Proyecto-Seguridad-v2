@@ -8,8 +8,42 @@ siguiendo `DESPLIEGUE_NUBE.md`.
 
 1. Su **llave pública SSH**: una línea que empieza con `ssh-ed25519`. Es pública, se puede
    enviar por chat. Nunca se pide ni se envía la llave privada.
-2. Su **IP pública** actual (la ve en https://ifconfig.me). Solo esa IP podrá entrar por SSH
-   mientras se instala; después se cierra el acceso y todo entra por Tailscale.
+2. Una **clave de autenticación de Tailscale** (`tskey-auth-...`), de un solo uso. Con ella la
+   VM entra a la red privada de Tailscale al arrancar y **no se abre ningún puerto a
+   Internet**, ni siquiera SSH. Así no importa que la IP pública de Gerardo cambie.
+
+## 0. Acceso sin IP fija: Tailscale desde el primer arranque (recomendado)
+
+Gerardo genera la clave en la consola de Tailscale: **Settings → Keys → Generate auth key**,
+con *Reusable* desactivado, *Ephemeral* desactivado, *Pre-approved* activado y vencimiento de
+1 día. La clave solo sirve para registrar una máquina, una vez, y caduca sola.
+
+Al crear la VM se pega este bloque como **datos personalizados** (*custom data*, cloud-init),
+reemplazando la clave:
+
+```yaml
+#cloud-config
+runcmd:
+  - curl -fsSL https://tailscale.com/install.sh | sh
+  - tailscale up --auth-key=tskey-auth-REEMPLAZAR --ssh --hostname=dcim
+```
+
+| Dónde se pega | Cómo |
+|---|---|
+| Portal | Pestaña **Opciones avanzadas → Datos personalizados** (*Custom data*) |
+| Azure CLI | Guardar el bloque en `cloud-init.yml` y agregar `--custom-data cloud-init.yml` a `az vm create` |
+
+Con esta opción:
+
+- En **Reglas de puerto de entrada** se elige **Ninguno**, y el paso 9 de la opción A y la
+  regla `ssh-gerardo` de la opción B se omiten.
+- Unos 2 minutos después de crearla, la VM aparece como `dcim` en la consola de Tailscale de
+  Gerardo, que entra con `ssh gns3@dcim` desde cualquier red.
+- Si la VM no aparece, se revisa en el portal: VM `dcim` → **Ayuda → Diagnóstico de
+  arranque → Registro serie**, buscando la salida de `tailscale up`.
+
+La alternativa, abrir SSH solo para la IP pública de Gerardo, obliga a editar la regla cada
+vez que esa IP cambia (hotspot, otra red, reinicio del módem).
 
 ## 1. Especificaciones
 
@@ -24,8 +58,9 @@ siguiendo `DESPLIEGUE_NUBE.md`.
 | Usuario administrador | **`gns3`** | Los scripts asumen ese usuario |
 | Autenticación | **Clave pública SSH**, sin contraseña | Pegar la llave de Gerardo |
 | Disco del sistema | Standard SSD, **64 GB** | Imágenes Docker de la topología y de la plataforma |
-| IP pública | Sí, estándar | Solo para la instalación inicial |
-| Puertos de entrada | **Ninguno abierto a Internet**; SSH solo desde la IP de Gerardo | Nada queda expuesto |
+| IP pública | Sí, estándar | La VM la necesita para salir a Internet (descargas); no se usa para entrar |
+| Puertos de entrada | **Ninguno** con la sección 0; si no, SSH solo desde la IP de Gerardo | Nada queda expuesto |
+| Datos personalizados | Bloque cloud-init de la sección 0 | Tailscale desde el primer arranque |
 | Apagado automático | Diario a las **23:00**, zona horaria (UTC-06:00) Centroamérica | Ahorra crédito |
 
 Costo de referencia de B4ms: alrededor de 0.17 USD por hora encendida, más el disco.

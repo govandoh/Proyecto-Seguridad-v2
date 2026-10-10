@@ -54,7 +54,9 @@ el precio vigente en la calculadora de Azure.
 
 ## 2. Preparar la VM
 
-Desde Windows, con la IP pública que muestra el portal:
+Desde Windows, con la IP pública que muestra el portal. Si la VM se creó con Tailscale desde
+el arranque (sección 0 de `CREAR_VM_AZURE.md`), se usa `dcim` en lugar de la IP y el paso 3
+se reduce a activar `tailscale serve`:
 
 ```powershell
 ssh gns3@<IP pública> "mkdir -p ~/plataforma"
