@@ -75,7 +75,7 @@ credenciales del servidor GNS3 quedan en `~/gns3_credenciales.txt`.
 2. Consola de administración → **DNS**: activar **MagicDNS** y **HTTPS Certificates**.
 3. En la VM:
    ```bash
-   sudo tailscale up --ssh --hostname=dcim     # abrir el enlace que imprime y aprobar
+   sudo tailscale up --hostname=dcim           # abrir el enlace que imprime y aprobar
    sudo tailscale serve --bg 8000              # https://dcim.<tailnet>.ts.net -> 127.0.0.1:8000
    tailscale status
    ```

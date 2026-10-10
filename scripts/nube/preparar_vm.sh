@@ -145,5 +145,5 @@ systemctl is-active lab-red gns3server docker
 "$HOGAR/.local/bin/gns3server" --version
 docker compose version 2>/dev/null || sudo docker compose version
 echo
-echo "Listo. Siguiente: sudo tailscale up --ssh --hostname=dcim  (abrir el enlace que imprime)"
+echo "Listo. Siguiente: sudo tailscale up --hostname=dcim  (abrir el enlace que imprime)"
 echo "Credenciales del servidor GNS3 en $HOGAR/gns3_credenciales.txt"

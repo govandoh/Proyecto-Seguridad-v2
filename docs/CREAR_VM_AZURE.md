@@ -25,7 +25,7 @@ reemplazando la clave:
 #cloud-config
 runcmd:
   - curl -fsSL https://tailscale.com/install.sh | sh
-  - tailscale up --auth-key=tskey-auth-REEMPLAZAR --ssh --hostname=dcim
+  - tailscale up --auth-key=tskey-auth-REEMPLAZAR --hostname=dcim
 ```
 
 | Dónde se pega | Cómo |
@@ -85,6 +85,17 @@ Verificar en la calculadora de precios de Azure antes de crear.
    **Origen: Direcciones IP**, **Direcciones IP de origen: `<IP de Gerardo>/32`** → Guardar.
 
 ## 3. Opción B: Azure CLI (Cloud Shell)
+
+La forma más simple es el script del repositorio, que aplica la sección 0 y todas las
+especificaciones, y prueba B2ms si no hay cuota para B4ms:
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/govandoh/Proyecto-Seguridad-v2/main/scripts/nube/crear_vm_azure.sh
+export TS_AUTHKEY='tskey-auth-...'      # la clave que entrega Gerardo
+bash crear_vm_azure.sh                  # o: REGION=centralus bash crear_vm_azure.sh
+```
+
+Equivalente manual, con SSH abierto solo para la IP de Gerardo:
 
 En el portal, abrir **Cloud Shell** (Bash) y reemplazar los dos valores:
 
