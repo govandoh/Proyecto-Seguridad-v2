@@ -95,7 +95,10 @@ done
 [ -n "$creada" ] || { echo "Ninguna combinación funcionó. Envíe esta salida a Gerardo."; exit 1; }
 
 echo "== Apagado automático diario a las 23:00 de Guatemala (05:00 UTC)"
-az vm auto-shutdown -g "$GRUPO" -n "$VM" --time 0500 -o none
+# Si el grupo quedó en una región no permitida (intento anterior), la política puede rechazar
+# la programación; en ese caso se configura en el portal y la VM sigue funcionando.
+az vm auto-shutdown -g "$GRUPO" -n "$VM" --time 0500 -o none 2>/dev/null || \
+  echo "   AVISO: no se pudo programar. Portal -> VM $VM -> Operaciones -> Apagado automático -> 23:00 (UTC-06:00)"
 
 echo "== Reglas de entrada del grupo de seguridad (deben ser solo las predeterminadas de Azure)"
 az network nsg rule list -g "$GRUPO" --nsg-name "${VM}NSG" -o table || true
