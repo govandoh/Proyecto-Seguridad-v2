@@ -1,13 +1,13 @@
 # Despliegue en Azure con acceso por Tailscale
 
 Una VM de Azure ejecuta el servidor de GNS3 con la topología y la plataforma. El equipo
-auditor entra por Tailscale: la plataforma en `https://dcim.<tailnet>.ts.net` con
-certificado válido y GNS3 en `http://dcim.<tailnet>.ts.net:3080`. La IP pública de Azure no
+auditor entra por Tailscale: la plataforma en `https://dcim.taila9c375.ts.net` con
+certificado válido y GNS3 en `http://dcim.taila9c375.ts.net:3080`. La IP pública de Azure no
 expone ningún servicio.
 
 ```
-Auditor (Tailscale) ── https://dcim.<tailnet>.ts.net ──► tailscale serve ──► 127.0.0.1:8000 plataforma
-                    └─ http://dcim.<tailnet>.ts.net:3080 ──► gns3server 2.2.61
+Auditor (Tailscale) ── https://dcim.taila9c375.ts.net ──► tailscale serve ──► 127.0.0.1:8000 plataforma
+                    └─ http://dcim.taila9c375.ts.net:3080 ──► gns3server 2.2.61
 
 VM Azure Ubuntu 24.04
  ├─ gns3server + ubridge + Docker  →  SW-CIRC-A/B (OVS), Alpine, Cloud1
@@ -21,8 +21,8 @@ Diferencias con la GNS3 VM local:
 |---|---|---|
 | Punto de captura | `eth2` de la VM | `br-lab`; el Cloud se conecta a `lab-gns` |
 | Ping de los Alpine a 10.10.10.1 | Sin respuesta | Con respuesta: el tráfico llega a la pila de la VM |
-| Acceso a la plataforma | Túnel SSH a `http://localhost:8000` | `https://dcim.<tailnet>.ts.net` |
-| RP ID de WebAuthn | `localhost` | `dcim.<tailnet>.ts.net`; la passkey por QR funciona sin restricciones |
+| Acceso a la plataforma | Túnel SSH a `http://localhost:8000` | `https://dcim.taila9c375.ts.net` |
+| RP ID de WebAuthn | `localhost` | `dcim.taila9c375.ts.net`; la passkey por QR funciona sin restricciones |
 | CPU | 1 | 4 (B4ms) |
 
 ## 1. Azure (en el portal)
@@ -76,7 +76,7 @@ credenciales del servidor GNS3 quedan en `~/gns3_credenciales.txt`.
 3. En la VM:
    ```bash
    sudo tailscale up --hostname=dcim           # abrir el enlace que imprime y aprobar
-   sudo tailscale serve --bg 8000              # https://dcim.<tailnet>.ts.net -> 127.0.0.1:8000
+   sudo tailscale serve --bg 8000              # https://dcim.taila9c375.ts.net -> 127.0.0.1:8000
    tailscale status
    ```
 4. Desde Windows, comprobar `ssh gns3@dcim "echo ok"`.
@@ -100,7 +100,7 @@ la misma carpeta, y con la carpeta a nombre de `root` la plataforma falla al arr
 ## 5. Desplegar la plataforma
 
 ```powershell
-.\scripts\windows\desplegar.ps1 -VM gns3@dcim -Modo nube -Dominio dcim.<tailnet>.ts.net
+.\scripts\windows\desplegar.ps1 -VM gns3@dcim -Modo nube -Dominio dcim.taila9c375.ts.net
 ```
 
 En el primer despliegue crea el `.env` con `RP_ID` y `ORIGENES` del dominio, `IFACE=br-lab` y
@@ -117,14 +117,14 @@ cadena íntegra.
 ssh gns3@dcim "cd ~/plataforma && docker compose exec plataforma python -m app.recuperar admin"
 ```
 
-Con el código, `admin` se da de alta en `https://dcim.<tailnet>.ts.net/alta` y registra su
+Con el código, `admin` se da de alta en `https://dcim.taila9c375.ts.net/alta` y registra su
 passkey. Después, en Administración, **Restablecer** a `operador` y `auditor1`.
 
 ## 6. Topología
 
 1. En el GNS3 local: **File → Export portable project** (`Topologia.gns3project`).
 2. En el cliente GNS3: **Edit → Preferences → Server**: desmarcar *Enable local server*;
-   Host `dcim.<tailnet>.ts.net`, puerto `3080`, autenticación con las credenciales de
+   Host `dcim.taila9c375.ts.net`, puerto `3080`, autenticación con las credenciales de
    `~/gns3_credenciales.txt`.
 3. **File → Import portable project** y elegir el archivo exportado.
 4. Clic derecho en **Cloud1 → Configure**: quitar `eth2` y agregar **`lab-gns`**. Reconectar
@@ -137,8 +137,8 @@ Para volver a usar la topología local, se marca otra vez *Enable local server* 
 
 | # | Prueba | Resultado esperado |
 |---|---|---|
-| 1 | `https://dcim.<tailnet>.ts.net/salud` desde un equipo con Tailscale | `{"estado":"ok","mqtt":true}`, certificado válido |
-| 2 | Interfaz web de GNS3, `http://dcim.<tailnet>.ts.net:3080` | Topología completa, nodos en verde |
+| 1 | `https://dcim.taila9c375.ts.net/salud` desde un equipo con Tailscale | `{"estado":"ok","mqtt":true}`, certificado válido |
+| 2 | Interfaz web de GNS3, `http://dcim.taila9c375.ts.net:3080` | Topología completa, nodos en verde |
 | 3 | Pestaña Red | "Captura real br-lab", 6 equipos en línea con su MAC |
 | 4 | Encender PC-INTRUSO | Solo `dispositivo_no_autorizado`, sin eventos de saturación (cierra el hallazgo H1) |
 | 5 | Registrar una passkey con un teléfono por QR | `passkey_registrada` con transporte `hybrid` |

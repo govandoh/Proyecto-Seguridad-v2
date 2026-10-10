@@ -68,6 +68,8 @@ En Docker, `MODO_RED=demo` en `.env` permite ensayar la demostración sin la top
 |---|---|
 | [docs/MANUAL_SIMULACIONES.md](docs/MANUAL_SIMULACIONES.md) | **Para auditores**: marco normativo, escenarios de simulación, evidencia y trazabilidad |
 | [docs/ACCESO_AUDITORES.md](docs/ACCESO_AUDITORES.md) | **Para auditores**: cómo entrar al laboratorio en la nube |
+| [docs/MANUAL_SIMULACIONES_NUBE.md](docs/MANUAL_SIMULACIONES_NUBE.md) | **Para auditores**: manual en su versión para la nube; Word y PDF en [docs/entregables/](docs/entregables/) |
+| [docs/ENTREGA_AUDITORIA.md](docs/ENTREGA_AUDITORIA.md) | Para el equipo: crear las cuentas de los auditores, entregar códigos y compartir la VM |
 | [docs/CREAR_VM_AZURE.md](docs/CREAR_VM_AZURE.md) | Creación de la VM de Azure (portal o CLI) |
 | [docs/DESPLIEGUE_NUBE.md](docs/DESPLIEGUE_NUBE.md) | Instalación en Azure con Tailscale y migración de la base |
 | [docs/ARRANQUE.md](docs/ARRANQUE.md) | Arranque diario del laboratorio local y solución de problemas |
