@@ -61,6 +61,6 @@ Resultado: **OK**, **Falla** o **Parcial**.
 
 | # | Hallazgo | Corrección | Estado |
 |---|---|---|---|
-| H1 | Al encender PC-INTRUSO, la GNS3 VM con 1 CPU llegó a una carga de 25 durante unos 3 min. Se registraron eventos falsos: `capturador_caido`, `sensor_mudo`, `ups_sin_comunicacion`, `cascada_poe` de SW-CIRC-B y `perdida_visibilidad` (136 a 171) | Asignar 2 o más CPU a la GNS3 VM en VirtualBox y repetir el paso 3 | Abierto |
+| H1 | Al encender PC-INTRUSO, la GNS3 VM con 1 CPU llegó a una carga de 25 durante unos 3 min. Se registraron eventos falsos: `capturador_caido`, `sensor_mudo`, `ups_sin_comunicacion`, `cascada_poe` de SW-CIRC-B y `perdida_visibilidad` (136 a 171) | Laboratorio trasladado a una VM de Azure de 4 vCPU. Repetido el 10 de octubre de 2026: encender PC-INTRUSO generó solo `dispositivo_no_autorizado` (evento 198), con carga de 0.12 y sin falsos positivos | Cerrado |
 | H2 | Los pasos 5 a 10 y las variantes se enviaron directamente al broker MQTT, por lo que no registran `comando_simulado` con actor | Repetirlos desde la pestaña Simulación en el ensayo final | Abierto |
 | H3 | El 3 de octubre la configuración de CAM-03 tenía la IP de CAM-02 y la plataforma lo detectó como `suplantacion` (evento 82) | Corregido a 10.10.10.55 | Cerrado |

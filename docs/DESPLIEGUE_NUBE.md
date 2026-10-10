@@ -133,6 +133,16 @@ passkey. Después, en Administración, **Restablecer** a `operador` y `auditor1`
 
 Para volver a usar la topología local, se marca otra vez *Enable local server* en el paso 2.
 
+### 6.1 Alternativa sin exportar: cargar el proyecto del repositorio
+
+Así se hizo el 10 de octubre de 2026. Se copia `gns3/Topologia.gns3` a
+`~/GNS3/projects/Topologia/` de la VM con `compute_id` cambiado a `local` y Cloud1 apuntando a
+`lab-gns`, y cada `gns3/configs/<nodo>.interfaces` a
+`project-files/docker/<node_id>/etc/network/interfaces`. Luego se reinicia `gns3server` (detecta
+el proyecto en su carpeta) y se abre con `POST /v2/projects/<id>/open`. Las MAC se conservan
+porque están en el archivo del proyecto. La API `projects/load` no sirve: exige el servidor en
+modo `--local`.
+
 ## 7. Verificación
 
 | # | Prueba | Resultado esperado |
