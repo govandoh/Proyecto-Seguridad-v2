@@ -90,8 +90,12 @@ eventos locales. Se coloca en el volumen **antes** del primer arranque:
 
 ```powershell
 scp migracion\plataforma_migracion.db gns3@dcim:~/plataforma_migracion.db
-ssh gns3@dcim "docker volume create --label com.docker.compose.project=plataforma-dcim --label com.docker.compose.volume=datos_plataforma plataforma-dcim_datos_plataforma && docker run --rm -v plataforma-dcim_datos_plataforma:/datos -v ~/:/origen:ro alpine sh -c 'cp /origen/plataforma_migracion.db /datos/plataforma.db && chown 10001 /datos/plataforma.db' && rm ~/plataforma_migracion.db"
+ssh gns3@dcim "docker volume create --label com.docker.compose.project=plataforma-dcim --label com.docker.compose.volume=datos_plataforma plataforma-dcim_datos_plataforma && docker run --rm -v plataforma-dcim_datos_plataforma:/datos -v ~/:/origen:ro alpine sh -c 'cp /origen/plataforma_migracion.db /datos/plataforma.db && chown -R 10001 /datos' && shred -u ~/plataforma_migracion.db"
 ```
+
+El `chown -R` debe incluir la carpeta `/datos`, no solo el archivo: SQLite crea su diario en
+la misma carpeta, y con la carpeta a nombre de `root` la plataforma falla al arrancar con
+`attempt to write a readonly database`.
 
 ## 5. Desplegar la plataforma
 
