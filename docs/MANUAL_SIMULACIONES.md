@@ -33,7 +33,7 @@ decisiones en una instalación real.
 
 | Norma o estándar | Qué exige o aporta | Cómo se aplica en la plataforma | Módulo |
 |---|---|---|---|
-| ISO/IEC 27001:2022, Anexo A | Controles de seguridad de la información | Cada evento lleva su control en el campo `control_iso`; ver sección 7 | Todos |
+| ISO/IEC 27001:2022, Anexo A | Controles de seguridad de la información | Cada evento lleva su control en el campo `control_iso`; ver la matriz de la sección 9.2 | Todos |
 | NFPA 110 | Sistemas de energía de emergencia y de reserva. Tipo 10: la planta debe tomar la carga en 10 s o menos. Ejercicio mensual con carga | Se mide el tiempo entre el corte y la planta en línea y se compara con 10 s. Ejercicio mensual de 30 min con carga | Energía |
 | NFPA 111 | Energía almacenada de emergencia (UPS y baterías) | Paso a batería sin interrupción, autonomía reportada frente a la de diseño, umbral de batería baja, pérdida de comunicación con el UPS | Energía |
 | IEEE 1188 | Mantenimiento y prueba de baterías VRLA | Umbral de batería baja al 25 % de la autonomía de diseño | Energía |
